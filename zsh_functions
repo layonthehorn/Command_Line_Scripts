@@ -1,0 +1,228 @@
+# deploys a new python env
+function pydeploy () {
+        if [ -d "venv/" ]; then
+            rm -rf "venv/"
+        fi
+	python3 -m venv venv
+	venv/bin/pip install --upgrade pip
+	cp ~/Documents/startupscripts/hello_world.py .
+	./hello_world.py
+}
+
+function ripiso () {
+
+    isoinfo -d -i /dev/sr0 | grep -i -E 'block size|volume size'
+    echo 'Enter Volume '
+    read vsize
+    echo 'Enter block '
+    read bsize
+
+    echo $vsize $bsize
+    dd if=/dev/sr0 of=~/Downloads/$1 bs=$bsize count $vsize status=progress
+
+}
+
+
+function ranger() {
+    if [ -z "$RANGER_LEVEL" ]; then
+        /usr/bin/ranger "$@"
+    else
+        exit
+    fi
+}
+
+function dnftxt () {
+    sudo dnf install $(cat $1)
+
+}
+
+# Ping Test
+function ctester () {
+
+    while [ 1 > 0 ]
+    do
+
+        date '+%A %W %Y %X' >> ~/Documents/pingresults.txt
+        ping 8.8.8.8 -c 4 >> ~/Documents/pingresults.txt
+        echo "" >> ~/Documents/pingresults.txt
+    done
+}
+
+# editing configure files for ZSH
+function zshedit () {
+    if [ "$1" = "-a"  ]; then
+
+        # editing the aliases and then updating the terminal
+        nvim ~/.config/zsh_functions/zsh_aliases
+        source ~/.config/zsh_functions/zsh_aliases
+    elif [ "$1" = "-f" ]; then
+
+        # editing the functions and then updating the terminal
+        nvim ~/.config/zsh_functions/zsh_functions
+        source ~/.config/zsh_functions/zsh_functions
+    elif [ "$1" = "-c" ]; then
+
+        # editing the main config and then updating the terminal
+        nvim ~/.zshrc
+        source ~/.zshrc
+    elif [ "$1" = "-h" ]; then
+
+        # help page to explain the usage of this function itself
+        echo "-a, Aliases"
+        echo "-f, Functions"
+        echo "-c, Configure File"
+        echo "-h, This Menu"
+    else
+        echo "$1 is not accepted, -h for help."
+    fi
+}
+function tsv () {
+    if [ -f "$1" ]; then
+        # Transcribes the video for uploading.
+        echo "Transcribing Video..."
+        ffmpeg -i "$1" -c:v libx264 -crf 21 -preset faster -pix_fmt yuv420p -maxrate 5000K -bufsize 5000K -vf 'scale=if(gte(iw\,ih)\,min(1920\,iw)\,-2):if(lt(iw\,ih)\,min(1920\,ih)\,-2)' -movflags +faststart -c:a aac -b:a 160k ~/Videos/lbryupload.mp4
+
+    else
+        # help page to explain the usage of this function itself
+        echo "Please include a filepath to a video file."
+
+    fi
+
+
+}
+
+
+function gameport () {
+    if [ "$1" = "-c" ]; then
+        # reloads the firewall, closing all the open ports.
+        echo "Closing Ports..."
+        sudo firewall-cmd --reload
+
+    elif [ "$1" = "-p" ]; then
+        echo "Listing open ports..."
+        sudo firewall-cmd --list-ports
+
+    elif [ "$1" = "-f" ]; then
+        echo "Opening Factorio ports..."
+        #sudo firewall-cmd --add-port=/tcp
+        sudo firewall-cmd --add-port=34197/udp
+
+    elif [ "$1" = "-t" ]; then
+        echo "Opening OpenTTD ports..."
+        sudo firewall-cmd --add-port=3979/tcp
+        sudo firewall-cmd --add-port=3979/udp
+
+    elif [ "$1" = "-s" ]; then
+        echo "Opening Stardew Valley ports..."
+        sudo firewall-cmd --add-port=24642/tcp
+        sudo firewall-cmd --add-port=24642/udp
+
+    elif [ "$1" = "-m" ]; then
+        echo "Opening Minecraft ports..."
+        sudo firewall-cmd --add-port=25565/tcp
+        sudo firewall-cmd --add-port=25565/udp
+
+    elif [ "$1" = "-w" ]; then
+        echo "Opening Worms ports..."
+        sudo firewall-cmd --add-port=17011/tcp
+        sudo firewall-cmd --add-port=6667/tcp
+        sudo firewall-cmd --add-port=17011/udp
+        sudo firewall-cmd --add-port=6667/udp
+
+    elif [ "$1" = "-d" ]; then
+        echo "Opening Doom ports..."
+        sudo firewall-cmd --add-port=5029/tcp
+        sudo firewall-cmd --add-port=5029/udp
+
+    elif [ "$1" = "-ms" ]; then
+        echo "Opening Mumble Server ports..."
+        sudo firewall-cmd --add-port=64738/tcp
+        sudo firewall-cmd --add-port=64738/udp
+
+    elif [ "$1" = "-wf" ]; then
+        echo "Opening Wreckfest ports..."
+        sudo firewall-cmd --add-port=27015/tcp
+        sudo firewall-cmd --add-port=27016/udp
+        sudo firewall-cmd --add-port=33540/udp
+        sudo firewall-cmd --add-port=27015/udp
+    else
+        # help page to explain the usage of this function itself
+        echo "-c, Close all game ports"
+        echo "-p, Show open ports"
+        echo "-f, Open Factorio ports"
+        echo "-m, Open Minecraft ports"
+        echo "-t, Open OpenTTD ports"
+        echo "-w, Open Worms ports"
+        echo "-s, Open Stardew Valley ports"
+        echo "-d, Open Minecraft ports"
+        echo "-ms, Open Mumble ports"
+        echo "-wf, Open Wreckfest ports"
+    fi
+
+
+}
+
+function tzip () {
+    tar -czvf $1.tar.gz $1
+}
+# system update for main and flatpak packages and other misc programs
+function sysupgrade () {
+        # system update
+	sudo dnf upgrade -y
+        # flatpak update
+	flatpak update -y
+        flatpak remove --unused -y
+        # updates better discord
+        betterdiscordctl self-upgrade
+        # updating auto complete
+        cd ~/.config/zsh_functions/zsh-autocomplete
+        git pull
+        cd
+
+}
+
+# lists commands for Vim
+function vcommands () {
+	echo ""
+	echo "----------------------SHORT CUTS-------------------------"
+	echo ""
+	echo "Quit :            q |	Append to end of line:        A"
+	echo "Save :            w |	Insert:                       i"
+	echo "Paste:            P |	Delete before cursor: {number}X"
+	echo "Undo last change: u |	Move to next word:            w"
+	echo "Replace mode:     R |	Move to last word:            b"
+	echo "Undo change:      u |	Redo Change:             CTRL-R"
+        echo "Yank into clip:   Y |   Select text:                  v"
+        echo "Jump end of line: \$ |   Jump start of line:           0"
+	echo ""
+	echo "------------------COMPLEX OPERATIONS--------------------"
+	echo ""
+	echo "Find next match: \\ then use * to cycle through matches"
+	echo "To enter the shell: :Sh then exit it to return to vim  "
+	echo "Use to run a command use:                  :! {command}"
+	echo ""
+}
+
+function sysbackup () {
+    /home/layonthehorn/.config/zsh_functions/get_packages.py /mnt/Mass_5400/DriveBackups/
+    echo "Backing up Music folder,"
+    tar -czvf /mnt/Mass_5400/DriveBackups/Music.tar.gz ~/Music
+    echo "Backing up Document folder"
+    tar -czvf /mnt/Mass_5400/DriveBackups/Documents.tar.gz ~/Documents
+    echo "Backing up .config folder."
+    tar -czvf /mnt/Mass_5400/DriveBackups/config.tar.gz ~/.config
+}
+
+# shows Ip addresses and Default gateways
+
+function ipconfig () {
+    echo "IP Addresses"
+    hostname -I
+    echo "   "
+    echo "Default Gateways"
+    ip route show
+    echo "   "
+    echo "Public IP"
+    curl ifconfig.me
+    echo ""
+    }

@@ -1,0 +1,58 @@
+# installs software packages
+alias sysinstall="sudo dnf install"
+alias syspackages="dnf list --installed | grep -i -e"
+alias sysremove="sudo dnf remove"
+# ssh into r-pie
+alias sspi="ssh pi@raspi"
+# searchs the file system for a match
+alias syssearch="~/.config/zsh_functions/filesearch.py"
+# calculates a subnet for you
+alias subcalc="~/.config/zsh_functions/subnet.py"
+# prints a system report in RGB
+alias sysreport="neofetch"
+# compresses everything in the current folder
+alias pypress="~/.config/zsh_functions/mass_compress.py"
+# I keep typing :q instead of exit
+alias :q="exit"
+# allows me to use vim as nvim
+alias vim="nvim"
+# logs you out in a hurry
+alias logout="pkill -9 -u $USER"
+alias lock="xlock -mode pipe"
+# shows you space on ext4 disks
+alias listdisk="df -ht ext4"
+# cleans out download folder
+alias cleandownloads="~/.config/zsh_functions/downloadclean.py"
+# dvd ripping command
+alias dvdrip="dvdbackup -i /dev/sr0 -o ~/Videos -F"
+# creates Audio Sink
+alias makesink="pactl load-module module-null-sink sink_name=GameSink object.linger=1 media.class=Audio/Duplex channel_map=FL,FR"
+# moc music player
+alias mp="cmus"
+
+# youtube DL music
+alias ytm="youtube-dl -i -R 10 -f 140"
+# unzip
+alias untzip="tar -xzf"
+# git commit commands
+alias gitmake="git init"
+alias gitadd="git add"
+alias gitshow="git status"
+alias gitcom="git commit -m"
+alias gitpull="git pull origin master"
+
+#
+alias refresh="clear && /home/layonthehorn/.config/zsh_functions/greeting.py | lolcat"
+
+# kitty shortcuts
+alias icat="kitty +kitten icat"
+alias ssh="kitty +kitten ssh"
+
+# lynx shortcuts
+alias wsearch="lynx https://duckduckgo.com"
+alias wawiki="lynx https://wiki.archlinux.org/"
+alias news="newsboat -r"
+
+# Steam start up aliases
+#alias cmoff="xfconf-query -c xfwm4 -p /general/use_compositing -s false"
+#alias cmon="xfconf-query -c xfwm4 -p /general/use_compositing -s true"
